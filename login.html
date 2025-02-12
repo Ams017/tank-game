@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+
+<body>
+    <div class="wrapper">
+        <form action="">
+            <h1>Login</h1>
+            <div class="input-box">
+                <input type="text" placeholder="Username" required>
+            </div>
+            <div class="input-box">
+                <input type="password" placeholder="Password" required>
+            </div>
+            
+            <div class="input-box">
+                <button type="button" id="loginButton">Login</button>
+            </div>
+
+            <div class="forgot">
+                <a href="#">Forgot Password</a>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginButton').addEventListener('click', () => {
+            // Implement your login logic here
+            // For now, we'll just redirect to tanky.html
+            window.location.href = 'tanky.html';
+        });
+    </script>
+</body>
+</html>
