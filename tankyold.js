@@ -1,10 +1,46 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const guestButton = document.getElementById('guestButton');
+    const loginButton = document.getElementById('loginButton');
+
+    if (guestButton) {
+        guestButton.addEventListener('click', () => {
+            startGame('guest');
+        });
+    }
+
+    if (loginButton) {
+        loginButton.addEventListener('click', () => {
+            window.location.href = 'login.php';
+        });
+    }
+
+    // Check if the user is logged in
+    fetch('isloggedin.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.loggedIn) {
+                startGame('loggedIn');
+            }
+        });
+
+    function startGame(mode) {
+        // Hide the menu if it exists
+        const menu = document.querySelector('.menu');
+        if (menu) {
+            menu.style.display = 'none';
+        }
+
+        // Initialize the game
+        animate();
+    }
 
     const canvas = document.querySelector('#myCanvas');
     const c = canvas.getContext('2d');
 
     canvas.width = innerWidth - 20;
     canvas.height = innerHeight - 20;
+
+    let mouseX = 0, mouseY = 0;
     
     class Turret {
         constructor(player) {
@@ -37,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.width = width;
             this.height = height;
             this.colour = colour;
-            this.speed = 5;
+            this.speed = 3;
             this.rotation = 3 * (Math.PI / 2);
             this.turret = new Turret(this);
         }
@@ -58,6 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }  
          
     }
+
+
 
     class Bullet {
         constructor(x, y, radius, colour, velocity) {
@@ -99,6 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    let selectedBlock = null;
+    let offsetX, offsetY;
 
     canvas.addEventListener('mousedown', (event) => {
         const mouseX = event.clientX - canvas.offsetLeft;
@@ -211,10 +251,10 @@ document.addEventListener('DOMContentLoaded', () => {
             player.y -= Math.sin(player.rotation) * player.speed;
         }
         if (keys.a || keys.A || keys.ArrowLeft) {
-            player.rotation -= 0.09;
+            player.rotation -= 0.06;
         }
         if (keys.d || keys.D ||  keys.ArrowRight) {
-            player.rotation += 0.09;
+            player.rotation += 0.06;
         }
 
         bullets.forEach((bullet, bulletIndex) => {
@@ -242,6 +282,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
+            // Check for collisions with player
+        
 
         });
 
@@ -251,4 +293,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     animate();
+
+    if (!guestButton && !loginButton) {
+        startGame('direct');
+    }
 });
