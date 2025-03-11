@@ -4,7 +4,7 @@
     <title>Register</title>
 </head>
 <body>
-    <form action="register.php" method="POST" onsubmit="return validateForm()">
+    <form action="register.php" method="post" onsubmit="return validateForm()">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required><br>
         
@@ -12,10 +12,10 @@
         <input type="email" id="email" name="email"><br>
         
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br>
+        <input type="password" id="password" name="password" required minlength="6"><br>
         
         <label for="confirmPassword">Confirm Password:</label>
-        <input type="password" id="confirmPassword" required><br>
+        <input type="password" id="confirmPassword" name="confirmPassword" required><br>
         
         <button type="submit">Register</button>
     </form>

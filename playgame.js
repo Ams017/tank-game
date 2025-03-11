@@ -1,10 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.querySelector('#myCanvas');
     const c = canvas.getContext('2d');
+    const mapWidth = mapData.map.width;
+    const mapHeight = mapData.map.height;
 
     canvas.width = innerWidth - 20;
     canvas.height = innerHeight - 20;
 
+    const blocks = [];
+    
     let mouseX = 0, mouseY = 0;
     
     class Turret {
@@ -52,15 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
             this.turret.draw();
         }
         update(mouseX, mouseY) {
-            console.log("test");
             this.turret.update(mouseX, mouseY);
-            console.log(mouseX, mouseY);
             this.draw();
         }  
          
     }
-
-
 
     class Bullet {
         constructor(x, y, radius, colour, velocity) {
@@ -84,6 +84,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    class Border {
+        constructor() {
+            this.x = 10;
+            this.y = 10;
+            this.width = mapWidth + 20;
+            this.height = mapHeight + 20;
+        }
+        draw() {
+            c.stokeStyle = 'black';
+            c.lineWidth = 20;
+            c.strokeRect(this.x, this.y, this.width, this.height);
+        }
+    }
+    
     class Block {
         constructor(x, y, width, height, colour) {
             this.x = x;
@@ -102,46 +116,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    let selectedBlock = null;
-    let offsetX, offsetY;
-
-    canvas.addEventListener('mousedown', (event) => {
-        const mouseX = event.clientX - canvas.offsetLeft;
-        const mouseY = event.clientY - canvas.offsetTop;
-
-        blocks.forEach((block) => {
-            if (mouseX > block.x && mouseX < block.x + block.width && mouseY > block.y && mouseY < block.y + block.height) {
-                selectedBlock = block;
-                offsetX = mouseX - block.x;
-                offsetY = mouseY - block.y;
-                block.isDragging = true;
-            }
-        });
-    });
-
-    canvas.addEventListener('mousemove', (event) => {
-        mouseX = event.clientX - canvas.offsetLeft;
-        mouseY = event.clientY - canvas.offsetTop;
-    
-        if (selectedBlock && selectedBlock.isDragging) {
-            selectedBlock.x = mouseX - offsetX;
-            selectedBlock.y = mouseY - offsetY;
-        }
-        
-    });
-
-    canvas.addEventListener('mouseup', () => {
-        if (selectedBlock) {
-            selectedBlock.isDragging = false;
-            selectedBlock = null;
-        }
+    mapData.blocks.forEach((block) => {
+        blocks.push(new Block(block.x + 10, block.y + 10, block.width, block.height, 'green'));
+        //draw the blocks
+        blocks[blocks.length - 1].draw();
     });
 
     const player = new Player(innerWidth / 2 - 10, innerHeight / 2 - 10, 40, 30, 'red');
     player.draw();
 
     const bullets = [];
-    const blocks = [];
     const keys = {
         w: false,
         a: false,
@@ -164,16 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('keydown', (event) => {
         keys[event.key] = true;
-        if (event.key === 'b' || event.key === 'B') {
-            const block = new Block(cursorX - 25, cursorY - 25, 10, 100, 'green');
-            blocks.push(block);
-            console.log('Block created:', block);
-        }
-        if (event.key === 'n' || event.key === 'N') {
-            const block = new Block(cursorX - 25, cursorY - 25, 100, 10, 'green');
-            blocks.push(block);
-            console.log('Block created:', block);
-        }
     });
 
     window.addEventListener('keyup', (event) => {
@@ -205,6 +179,9 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(animate);
         c.clearRect(0, 0, canvas.width, canvas.height);
         player.update(mouseX, mouseY);
+        blocks.forEach((block) => {
+            block.update();
+        });
 
         // Update player position based on key presses
         if (keys.w || keys.W ||  keys.ArrowUp) {
@@ -248,12 +225,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
         });
-
-        blocks.forEach((block) => {
-            block.draw();
-        });
     }
-
     animate();
+
+    const mapBorder = new Border();
+    mapBorder.draw();
+
+    let data = {
+        "map": {
+            "width": mapWidth,
+            "height": mapHeight
+        },
+        "blocks": []
+    };
 
 });
